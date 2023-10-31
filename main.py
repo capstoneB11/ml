@@ -1,5 +1,6 @@
 from fastapi import FastAPI
-from agent import get_img
+from agent import detect
+from firestore import UploadDataToFirestore
 
 app = FastAPI()
 
@@ -13,10 +14,17 @@ app = FastAPI()
 async def root():
     return {"message": "Hello World"}
 
-@app.get("/get_img")
-async def root():
-    img = await get_img()
-    return {"message": img}
+@app.get("/detect/{image_id}")
+async def root(image_id: str):
+
+    # Get data['image', 'count'']
+    data = await detect(image_id)
+
+    # Upload data to firestore
+    r = UploadDataToFirestore(data, image_id)
+
+    return {"message": "success",
+            "id": r}
 
 
 # This is route group for
