@@ -1,21 +1,39 @@
 import torch
 
 from PIL import Image
-import numpy as np
-from matplotlib import pyplot as plt
+import io
 
 import base64
 
-async def get_img():
-    # model = torch.load('model/last.pt')
-    # results =  model("test/img.jpeg")
+from firestore import GetImageFromFirestore
 
-    # img = Image.fromarray(results.render(labels=False)[0], 'RGB')
-    image = Image.open('test/img.jpeg')
-    img_str = base64.b64encode(bytes(image.tobytes()))
-    return img_str
+async def detect(idRef = None):
+    # Load model
+    model = torch.hub.load("", 'custom', path="./runs/train/exp4/weights/last.pt", source="local")
+    
+    # Load image
+    img_enc = GetImageFromFirestore(idRef=idRef)
+    img_decoded = Image.open(io.BytesIO(base64.b64decode(img_enc)))
 
+    # with open('./test/img.jpeg', "rb") as binary_file:
+    #     binary_data = binary_file.read()
+    #     encoded_data = base64.b64encode(binary_data).decode()
 
+    # Run model
+    results =  model(img_decoded)
+    num_boxes = len(results.xyxy[0])
+
+    # Render Image
+    img = Image.fromarray(results.render(labels=False)[0], 'RGB')
+    img_io = io.BytesIO()
+    img.save(img_io, format='PNG')
+
+    # Encode Image
+    base64_image = base64.b64encode(img_io.getvalue()).decode()
+
+    data = { 'image' : base64_image, 'count' : num_boxes}
+
+    return data
 # Inference 
 
 
