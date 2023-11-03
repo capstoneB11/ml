@@ -1,7 +1,9 @@
 import datetime
 
 class Chickount:
-    def __init__(self, idRef, imageData, count, timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") ):
+    def __init__(self,uname,part, idRef, imageData, count, timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") ):
+        self.uname = uname
+        self.part = part
         self.idRef = idRef
         self.imageData = imageData
         self.timestamp = timestamp
@@ -17,6 +19,8 @@ class Chickount:
     
     def to_dict(self):
         return {
+            "uname" : self.uname,
+            "part" : self.part,
             "idRef": self.idRef,
             "imageData": self.imageData,
             "timestamp": self.timestamp,

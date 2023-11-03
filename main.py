@@ -17,7 +17,7 @@ async def root():
 @app.get("/detect/{image_id}")
 async def root(image_id: str):
 
-    # Get data['image', 'count'']
+    # Get data['image', 'count']
     data = await detect(image_id)
 
     # Upload data to firestore

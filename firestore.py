@@ -9,8 +9,13 @@ app = firebase_admin.initialize_app(cred)
 
 def UploadDataToFirestore(data,idRef, collection_name = 'yolo'):
     db = firestore.client()
+    data = db.collection('esp').document(idRef).get().to_dict()
 
-    data = Chickount(idRef=idRef, imageData=data['image'], count=data['count'])
+    data = Chickount(uname=data['uname'], 
+                     part=data['part'], 
+                     idRef=idRef, 
+                     imageData=data['image'], 
+                     count=data['count'])
     doc_ref = db.collection(collection_name).add(data.to_dict())
 
     return doc_ref[1].id
