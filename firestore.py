@@ -9,21 +9,24 @@ app = firebase_admin.initialize_app(cred)
 
 def UploadDataToFirestore(data,idRef, collection_name = 'yolo'):
     db = firestore.client()
-    data = db.collection('esp').document(idRef).get().to_dict()
+    q = db.collection('esp').document(idRef).get().to_dict()
 
-    data = Chickount(uname=data['uname'], 
-                     part=data['part'], 
+    up = Chickount(uname=q['uname'], 
+                     part=q['cam_part'], 
                      idRef=idRef, 
-                     imageData=data['image'], 
-                     count=data['count'])
-    doc_ref = db.collection(collection_name).add(data.to_dict())
+                     image=data['image'], 
+                     count=data['count'],
+                     timestamp=q['timestamp'])
+    doc_ref = db.collection(collection_name).add(up.to_dict())
 
     return doc_ref[1].id
 
 def GetImageFromFirestore(idRef = None, collection_name = 'esp'):
     db = firestore.client()
     
-    img = db.collection(collection_name).document(idRef).get().to_dict()['image']
+    q = db.collection(collection_name).document(idRef).get().to_dict()
+    img = q['image']
+
     img_base64 = img.split(',')[1]
 
     return img_base64
