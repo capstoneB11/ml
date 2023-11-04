@@ -9,7 +9,7 @@ from firestore import GetImageFromFirestore
 
 async def detect(idRef = None):
     # Load model
-    model = torch.hub.load("", 'custom', path="./runs/train/exp4/weights/last.pt", source="local")
+    model = torch.hub.load("", 'custom', path="./runs/train/exp5/weights/last.pt", source="local")
     
     # Load image
     img_enc = GetImageFromFirestore(idRef=idRef)
@@ -30,6 +30,7 @@ async def detect(idRef = None):
 
     # Encode Image
     base64_image = base64.b64encode(img_io.getvalue()).decode()
+    base64_image = "data:image/png;base64," + base64_image
 
     data = { 'image' : base64_image, 'count' : num_boxes}
 
